@@ -13,8 +13,13 @@ class Item(BaseModel):
     Variedad_menu: int
     Vale_precio_pagado: int
 
-svmodel = open("SVModel.pkl","rb")
-model = joblib.load(svmodel) 
+SVCmodel = open("./Models/SVC.pkl","rb")
+Treemodel = open("./Models/Arboles.pkl","rb")
+KNNmodel = open("./Models/KNN.pkl","rb")
+
+modelSVC = joblib.load(SVCmodel) 
+modelTree = joblib.load(Treemodel) 
+modelKNN = joblib.load(KNNmodel) 
 
 app = FastAPI()
 
@@ -25,6 +30,13 @@ async def index():
 @app.post('/predict')
 def predict_function(item: Item):
   # sabor ambiente servicio variedad vale_precio
-   prediction = model.predict(np.array([item.Sabor,item.Ambiente,item.Servicio,item.Variedad_menu,item.Vale_precio_pagado]).reshape(1, -1))
-   print(prediction[0])
-   return {"data": str(prediction[0])}
+   predictionSVC = modelSVC.predict(np.array([item.Sabor,item.Ambiente,item.Servicio,item.Variedad_menu,item.Vale_precio_pagado]).reshape(1, -1))
+   predictionTree = modelTree.predict(np.array([item.Sabor,item.Ambiente,item.Servicio,item.Variedad_menu,item.Vale_precio_pagado]).reshape(1, -1))
+   predictionKNN = modelKNN.predict(np.array([item.Sabor,item.Ambiente,item.Servicio,item.Variedad_menu,item.Vale_precio_pagado]).reshape(1, -1))
+   print(predictionSVC[0])
+   return {"data": {
+                    "svc":str(predictionSVC[0]),
+                    "tree": str(predictionTree[0]),
+                    "knn": str(predictionKNN[0]),
+                    }
+          }
