@@ -1,6 +1,7 @@
 from typing import Optional
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Body, Query ,Path
 from pydantic import BaseModel
 import numpy as np
@@ -22,6 +23,14 @@ modelTree = joblib.load(Treemodel)
 modelKNN = joblib.load(KNNmodel) 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get('/')
 async def index():
